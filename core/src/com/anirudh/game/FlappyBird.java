@@ -2,32 +2,40 @@ package com.anirudh.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class FlappyBird extends ApplicationAdapter {
-	SpriteBatch batch;
-	Texture img;
-	
+class FlappyBird extends ApplicationAdapter {
+	private SpriteBatch batch;
+	private Texture background;
+
+	private Texture[] birds;
+	private int flapState = 0;
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+		background = new Texture("bg.png");
+		birds = new Texture[2];
+		birds[0] = new Texture("bird.png");
+		birds[1] = new Texture("bird2.png");
 	}
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(1, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
-		batch.draw(img, 0, 0);
+		batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+		batch.draw(birds[flapState], (Gdx.graphics.getWidth() / 2) - (birds[flapState].getWidth() / 2), (Gdx.graphics.getHeight() / 2) - (birds[flapState].getHeight() / 2));
+		flapState = (flapState + 1) % 2;
+
 		batch.end();
 	}
 	
 	@Override
 	public void dispose () {
 		batch.dispose();
-		img.dispose();
+		background.dispose();
+		birds[0].dispose();
+		birds[1].dispose();
 	}
 }

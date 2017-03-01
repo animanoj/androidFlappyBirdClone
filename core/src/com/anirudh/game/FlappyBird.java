@@ -95,7 +95,7 @@ class FlappyBird extends ApplicationAdapter {
         nearestTube = 0;
         font = new BitmapFont();
         font.setColor(Color.WHITE);
-        font.getData().setScale(10);
+        font.getData().setScale(8);
         layout = new GlyphLayout();
 
         gameOver = new Texture("gameover.png");
@@ -109,8 +109,10 @@ class FlappyBird extends ApplicationAdapter {
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         if(gameState == 0) {
-            if (Gdx.input.justTouched())
+            if (Gdx.input.justTouched()) {
+                velocity = -30;
                 gameState = 1;
+            }
         }
         else if(gameState == 1) {
             if(Gdx.input.justTouched()) {
@@ -137,19 +139,19 @@ class FlappyBird extends ApplicationAdapter {
                 bottomRectangle[i].set(tubeX[i], Gdx.graphics.getHeight() / 2 - (gap / 2) - bottomTube.getHeight() + tubeOffset[i], bottomTube.getWidth(), bottomTube.getHeight());
             }
 
-            if(birdY > 0) {
-                velocity += gravity;
-                birdY -= velocity;
-            }
-            else
+            if(birdY <= 0)
                 gameState = 2;
 
             font.draw(batch, String.valueOf(score), 100, 200);
         }
         else if(gameState == 2) {
-            batch.draw(gameOver, (Gdx.graphics.getWidth() / 2) - (gameOver.getWidth()), (Gdx.graphics.getHeight() / 2) + (gameOver.getHeight()), gameOver.getWidth() * 2, gameOver.getHeight() * 2);
+            batch.draw(gameOver, (Gdx.graphics.getWidth() / 2) - (3 * gameOver.getWidth() / 4), (Gdx.graphics.getHeight() / 2) + (3 * gameOver.getHeight() / 4), gameOver.getWidth() * 1.5f, gameOver.getHeight() * 1.5f);
             layout.setText(font, String.valueOf(score));
             font.draw(batch, String.valueOf(score), Gdx.graphics.getWidth() / 2 - layout.width / 2, Gdx.graphics.getHeight() / 2 + layout.height / 2);
+
+            // TODO create restart button
+            // TODO save high score
+
             if (Gdx.input.justTouched()) {
                 gameState = 1;
                 startGame();
@@ -161,7 +163,10 @@ class FlappyBird extends ApplicationAdapter {
 
         stateTime = (stateTime + Gdx.graphics.getDeltaTime()) % 0.2f;
         TextureRegion currentFrame = birdAnimation.getKeyFrame(stateTime, true);
-
+        if(gameState != 0 && birdY > -(currentFrame.getRegionHeight())){
+            velocity += gravity;
+            birdY -= velocity;
+        }
         batch.draw(currentFrame, (Gdx.graphics.getWidth() / 2) - (currentFrame.getRegionWidth() / 2), birdY);
 
         batch.end();
